@@ -1,3 +1,28 @@
-span{
-    padding: 5px;
+#pitch {
+    width: 339px;
+
+    overflow: hidden;
+}
+
+span {
+    padding: 5px 10px 5px 10px;
+    color: #999;
+    display: block;
+    float: left;
+    border: 1px solid #555;
+    width: 8px;
+}
+
+.box {
+    border: 1px solid white;
+    width: 90px;
+    float: left;
+}
+
+.editable {
+    color: #000;
+}
+
+.solved{
+    color: #adff2f;
 }

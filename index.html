@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head class="html5">
+<head class="jsudoku">
     <meta charset="utf-8">
-    <title>html5</title>
+    <title>jsudoku</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
     <script src="sudoku.js"></script>
     <script>
         $(document).ready(function() {
-           Sudoku.showPitch('pitch');
+           Sudoku.show('pitch', 1);
         });
 
     </script>
@@ -16,7 +16,7 @@
 <body>
 <p>at the moment only the pitch generation is implemented</p>
 <div id="pitch">
-
+    
 </div>
 </body>
 </html>

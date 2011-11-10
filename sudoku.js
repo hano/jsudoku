@@ -3,6 +3,8 @@ var Sudoku = (function() {
     var that = this;
     var startLine = [1, 2, 3, 4, 5, 6, 7, 8, 9];
     var magic = 3;
+    var empty = '';
+    var solution = [];
 
     var playGround = [];
 
@@ -10,6 +12,8 @@ var Sudoku = (function() {
     var init = function() {
         generatePlayground();
         randomizePlayground();
+        solution = deepCopy(playGround);
+        clearPlayGround(22);
     }
 
     var shiftMe = function(array, shift) {
@@ -81,6 +85,23 @@ var Sudoku = (function() {
         }
     }
 
+    var clearPlayGround = function(given) {
+        var spare = 81;
+        var pg = playGround;
+
+        for (var x = 81; x >= given; x--) {
+
+            for (var i in pg) {
+                for (var k in pg[i]) {
+                    if (Math.floor(Math.random() * 2) === 0 && spare > given) {
+                        pg[i][k] = empty;
+                        spare -= 1
+                    }
+                }
+            }
+        }
+    }
+
     var deepCopy = function(array) {
         var s = JSON.stringify(array);
         return JSON.parse(s);
@@ -112,6 +133,14 @@ var Sudoku = (function() {
         return (Math.round(Math.random()) - 0.5);
     }
 
+    var check = function(value, co){
+        if(solution[co.x][co.y] === Number(value)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     return {
 
         /**
@@ -125,7 +154,7 @@ var Sudoku = (function() {
             init();
             if (callback) {
                 callback(playGround);
-            }else{
+            } else {
                 return playGround;
             }
         },
@@ -143,11 +172,100 @@ var Sudoku = (function() {
             }
             $('#' + id).html('');
             for (var i in playGround) {
-                var cssId = 'box_' + i;
-                $('#' + id).append('<div class="box" id="' + cssId + '">');
+                var cssId = 'row_' + i;
+                $('#' + id).append('<div class="row" id="' + cssId + '">');
                 for (var k in playGround[i]) {
-                    $('#' + id + ' #' + cssId).append('<span>' + playGround[i][k] + '</span>');
+                    var value = playGround[i][k]
+                    if (value === empty) {
+                        $('#' + id + ' #' + cssId).append('<span class="editable" contenteditable="true">' + value + '</span>');
+                    } else {
+                        $('#' + id + ' #' + cssId).append('<span>' + value + '</span>');
+                    }
+
                 }
+            }
+        },
+
+
+        solve: function(){
+            console.log(solution);
+        },
+
+        show: function(id, hintLevel) {
+            if (playGround.length === 0) {
+                init();
+            }
+
+            var boxMarkup = '<div class="box" id="b_0_0"></div> <div class="box" id="b_0_1"></div> <div class="box" id="b_0_2"></div>' +
+                '<div class="box" id="b_1_0"></div> <div class="box" id="b_1_1"></div> <div class="box" id="b_1_2"></div>' +
+                '<div class="box" id="b_2_0"></div> <div class="box" id="b_2_1"></div> <div class="box" id="b_2_2"></div>';
+
+            $('#' + id).append(boxMarkup);
+
+            $('#' + id + ' span').live('blur', function() {
+                var s = $(this).html();
+                $(this).html(s.substring(0, 1));
+                var value = $(this).html();
+                var coords = {};
+                var classes = $(this).attr('class').split('__');
+                if(classes.length > 1){
+                    var xy = classes[1].split('-');
+                    if(xy.length > 1){
+                            coords['x'] = xy[0];
+                            coords['y'] = xy[1];
+                    }
+                }
+                if(hintLevel === 1){
+                    if(check(value, coords)){
+                        $(this).addClass('solved');
+                    }
+                }
+
+
+            });
+
+            for (var i in playGround) {
+                for (var k in playGround[i]) {
+                    var value = playGround[i][k]
+                    var insert = '<span class="field__' + i + '-' + k + '__';
+                    if (value === empty) {
+                        insert += ' editable" contenteditable="true"';
+                    }else{
+                        insert += '"';
+                    }
+                    insert += '>' + value + '</span>';
+                    var box;
+                    if (i <= 2 && k <= 2) {
+                        //0_0
+                        box = '0_0';
+                    } else if (i <= 2 && k <= 5) {
+                        //0_2
+                        box = '0_1';
+                    } else if (i <= 2 && k <= 9) {
+                        //0_3
+                        box = '0_2';
+                    } else if (i <= 5 && k <= 2) {
+                        //2_0
+                        box = '1_0';
+                    } else if (i <= 5 && k <= 5) {
+                        //2_2
+                        box = '1_1';
+                    } else if (i <= 5 && k <= 9) {
+                        //2_3
+                        box = '1_2';
+                    } else if (i <= 9 && k <= 2) {
+                        //3_0
+                        box = '2_0';
+                    } else if (i <= 9 && k <= 5) {
+                        //3_2
+                        box = '2_1';
+                    } else if (i <= 9 && k <= 9) {
+                        //3_3
+                        box = '2_2';
+                    }
+                    $('#' + id + ' #b_' + box).append(insert);
+                }
+                //console.log(playGround[i]);
             }
         },
 
