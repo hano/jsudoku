@@ -2,7 +2,6 @@ var Sudoku = (function() {
 
     var that = this;
     var startLine = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-    var testLine = [1, 2, 3, 4, 5, 6, 7, 8, 9];
     var magic = 3;
 
     var playGround = [];
@@ -90,14 +89,18 @@ var Sudoku = (function() {
     var splitShift = function(array, offset, shift) {
 
         var a = deepCopy(array);
+
+//        slices the array
         var t1 = a.splice(0, offset);
         var t2 = a.splice(0, offset);
         var t3 = a;
+
+//        shifts the array
         shiftMe(t1, shift);
         shiftMe(t2, shift);
         shiftMe(t3, shift);
 
-//        pushed ein array in ein array
+//        push an array into an array
         t1.push.apply(t1, t2);
         t1.push.apply(t1, t3);
 
@@ -149,6 +152,7 @@ var Sudoku = (function() {
         },
 
         test: function(callback) {
+            var testLine = [1, 2, 3, 4, 5, 6, 7, 8, 9];
             var pg = deepCopy(playGround);
             var err = [];
             for (var i in pg) {
