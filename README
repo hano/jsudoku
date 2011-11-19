@@ -1,4 +1,5 @@
-currently only creating a sudoku pitch is possible
+sudoku used with The-M-Project
 
-example: index.html
-documentation is inline
+use mwaylabs/espresso to start the app
+or go to
+time2dev.com/jsudoku to see a running example
