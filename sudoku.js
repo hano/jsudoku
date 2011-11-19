@@ -9,11 +9,12 @@ var Sudoku = (function() {
     var playGround = [];
 
 
-    var init = function() {
+    var init = function(difficulty) {
+        var d = difficulty ? difficulty : 22;
         generatePlayground();
         randomizePlayground();
         solution = deepCopy(playGround);
-        clearPlayGround(22);
+        clearPlayGround(d);
     }
 
     var shiftMe = function(array, shift) {
@@ -133,14 +134,27 @@ var Sudoku = (function() {
         return (Math.round(Math.random()) - 0.5);
     }
 
-    var check = function(value, co){
-        if(solution[co.x][co.y] === Number(value)){
+    var check = function(value, co) {
+        if (solution[co.x][co.y] === Number(value)) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
+
+    var getCoords = function(cssClass) {
+        var classes = cssClass.split('__'),
+                coords = {};
+        if (classes.length > 1) {
+            var xy = classes[1].split('-');
+            if (xy.length > 1) {
+                coords['x'] = xy[0];
+                coords['y'] = xy[1];
+            }
+        }
+        return coords;
+    }
     return {
 
         /**
@@ -187,50 +201,122 @@ var Sudoku = (function() {
         },
 
 
-        solve: function(){
-            console.log(solution);
+        showSolve: function(id) {
+            $('#' + id + ' .box span').each(function() {
+
+                if (check($(this).html(), getCoords($(this).attr('class')))) {
+                    $(this).addClass('correct');
+                } else {
+                    $(this).addClass('wrong');
+                }
+            });
         },
 
-        show: function(id, hintLevel) {
-            if (playGround.length === 0) {
-                init();
+        /**
+         *
+         * @param id the id of the surrounding sudoku element
+         * @param hintLevel 0 = no check on blur, 1 = instant check of the correct value
+         * @param difficulty count of the hidden tiles
+         * @param newPitch create a new pitch on every call
+         */
+        show: function(id, hintLevel, difficulty, newPitch) {
+            if (playGround.length === 0 || newPitch) {
+                init(difficulty);
             }
 
             var boxMarkup = '<div class="box" id="b_0_0"></div> <div class="box" id="b_0_1"></div> <div class="box" id="b_0_2"></div>' +
-                '<div class="box" id="b_1_0"></div> <div class="box" id="b_1_1"></div> <div class="box" id="b_1_2"></div>' +
-                '<div class="box" id="b_2_0"></div> <div class="box" id="b_2_1"></div> <div class="box" id="b_2_2"></div>';
+                    '<div class="box" id="b_1_0"></div> <div class="box" id="b_1_1"></div> <div class="box" id="b_1_2"></div>' +
+                    '<div class="box" id="b_2_0"></div> <div class="box" id="b_2_1"></div> <div class="box" id="b_2_2"></div>' +
+                    '<div class="navigator">' +
+                    '<a href="#">&nbsp;</a><a href="#">1</a><a href="#">2</a><a href="#">3</a><a href="#">4</a><a href="#">5</a><a href="#">6</a><a href="#">7</a><a href="#">8</a><a href="#">9</a>' +
+                    '</div>';
 
-            $('#' + id).append(boxMarkup);
 
-            $('#' + id + ' span').live('blur', function() {
-                var s = $(this).html();
-                $(this).html(s.substring(0, 1));
-                var value = $(this).html();
+            var responsiveLayout = function(id) {
+                var w = $('#' + id + ' .box span').outerWidth();
+                $('#' + id + ' .box span').css('height', w + 'px');
+                $('#' + id + ' .box span').css('font-size', Math.round(w / 2) + 'px');
+            }
+
+            $('#' + id).html('');
+            $('#' + id).append('<div class="Sudoku">' + boxMarkup + '</div>');
+            setTimeout(function() {
+                responsiveLayout(id);
+
+                $('.Sudoku .editable').bind('click', function() {
+                    coords = getCoords($(this).attr('class'));
+                    $('.active').removeClass('active');
+                    $(this).removeClass('wrong');
+                    $(this).removeClass('correct');
+                    $(this).addClass('active');
+                });
+
+            }, 5);
+
+
+            $(document).ready(function() {
                 var coords = {};
-                var classes = $(this).attr('class').split('__');
-                if(classes.length > 1){
-                    var xy = classes[1].split('-');
-                    if(xy.length > 1){
-                            coords['x'] = xy[0];
-                            coords['y'] = xy[1];
-                    }
-                }
-                if(hintLevel === 1){
-                    if(check(value, coords)){
-                        $(this).addClass('solved');
-                    }
-                }
+                $('#' + id).css('overflow', 'hidden');
 
+                $(window).bind('resize', function() {
+                    responsiveLayout(id);
+                });
+//                TODO switch user agent
+                
 
+                $('.Sudoku .navigator a').bind('click', function() {
+                    var value = $(this).html();
+                    var activeOne = $('.Sudoku .active');
+                    if (activeOne.length > 0) {
+                        activeOne.html(value);
+                        if (coords) {
+                            if (hintLevel === 1 && check(value, coords)) {
+                                activeOne.addClass('solved');
+                            } else {
+                                activeOne.removeClass('solved');
+                            }
+                        }
+                    }
+                });
             });
+
+
+            /*
+             TODO IF USER AGENT IS PC
+             $('#' + id + ' span').live('blur', function() {
+             var s = $(this).html();
+             $(this).html(s.substring(0, 1));
+             var value = $(this).html();
+             var coords = {};
+             var classes = $(this).attr('class').split('__');
+             if (classes.length > 1) {
+             var xy = classes[1].split('-');
+             if (xy.length > 1) {
+             coords['x'] = xy[0];
+             coords['y'] = xy[1];
+             }
+             }
+             if (hintLevel === 1) {
+             if (check(value, coords)) {
+             $(this).addClass('solved');
+             }
+             }
+
+
+             });
+             */
 
             for (var i in playGround) {
                 for (var k in playGround[i]) {
                     var value = playGround[i][k]
                     var insert = '<span class="field__' + i + '-' + k + '__';
                     if (value === empty) {
-                        insert += ' editable" contenteditable="true"';
-                    }else{
+                        insert += ' editable"';
+//                        TODO switch user agent
+//                        if(pc)
+//                          contenteditable="true"';
+//                        else
+                    } else {
                         insert += '"';
                     }
                     insert += '>' + value + '</span>';
