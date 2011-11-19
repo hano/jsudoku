@@ -1,13 +1,14 @@
+.Sudoku {
+    overflow: hidden;
+    position: relative;
+}
 
 .Sudoku .box span {
-    xpadding: 5px 10px 5px 10px;
     color: #999;
     display: block;
     float: left;
     border: 1px solid #555;
     width: 31%;
-    xmax-height: 80px;
-    xmax-width: 80px;
     text-align: center;
     background: #adff2f;
 }
@@ -17,19 +18,19 @@
     background: #31BBF3;
 }
 
-.Sudoku .box span.correct{
+.Sudoku .box span.correct {
     background: #adff2f;
 }
 
-.Sudoku .box span.wrong{
+.Sudoku .box span.wrong {
     background: #db7093;
 }
 
-.Sudoku .box span.solved{
+.Sudoku .box span.solved {
     color: green;
 }
 
-.Sudoku .box span.active{
+.Sudoku .box span.active {
     background: #da70d6;
 }
 
@@ -42,21 +43,25 @@
 }
 
 .Sudoku .box:nth-child(4),
-.Sudoku .box:nth-child(7){
-    clear:both;
+.Sudoku .box:nth-child(7) {
+    clear: both;
 }
 
-.Sudoku .navigator{
+.Sudoku .navigator {
     float: left;
     width: 100%;
-    padding: 50px 0 0 0;
+    padding: 30px 0 0 0;
     margin: 0 auto;
 }
 
-.Sudoku .navigator a{
+.Sudoku .navigator .zoom {
+
+}
+
+.Sudoku .navigator a {
     background: #EAC700;
     color: #555;
-    width: 7%;
+    width: 6%;
     display: inline-block;
     text-align: center;
     margin: 0 1%;
@@ -66,4 +71,47 @@
     font-size: 20px;
     padding: 5px 0 0 0;
     color: #333;
+}
+
+.Sudoku .zoom {
+    top: 0%;
+    left: 0%;
+    position: absolute;
+    display: block;
+    width: 100px;
+    height: 100px;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+}
+
+.Sudoku .zoombox {
+    width: 33%;
+    border-top: 1px solid white;
+    height: 33%;
+    float: left;
+    border-left: 1px solid white;
+}
+
+.Sudoku span .zoombox {
+    width: 30%;
+    height: 30%;
+}
+
+.Sudoku span .zoombox.selected{
+    background: #F1C903;
+}
+
+.Sudoku .zoombox.selected{
+    background: red;
+}
+
+.Sudoku .zb_0_0,
+.Sudoku .zb_0_1,
+.Sudoku .zb_0_2{
+    border-top: none;
+}
+.Sudoku .zb_0_0,
+.Sudoku .zb_1_0,
+.Sudoku .zb_2_0{
+    border-left: none;
 }

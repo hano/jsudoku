@@ -5,6 +5,7 @@ var Sudoku = (function() {
     var magic = 3;
     var empty = '';
     var solution = [];
+    var ZOOM = '#';
 
     var playGround = [];
 
@@ -202,6 +203,7 @@ var Sudoku = (function() {
 
 
         showSolve: function(id) {
+            $('#' + id + ' .active').removeClass('active');
             $('#' + id + ' .box span').each(function() {
 
                 if (check($(this).html(), getCoords($(this).attr('class')))) {
@@ -220,6 +222,8 @@ var Sudoku = (function() {
          * @param newPitch create a new pitch on every call
          */
         show: function(id, hintLevel, difficulty, newPitch) {
+            var coords = {};
+
             if (playGround.length === 0 || newPitch) {
                 init(difficulty);
             }
@@ -228,20 +232,35 @@ var Sudoku = (function() {
                     '<div class="box" id="b_1_0"></div> <div class="box" id="b_1_1"></div> <div class="box" id="b_1_2"></div>' +
                     '<div class="box" id="b_2_0"></div> <div class="box" id="b_2_1"></div> <div class="box" id="b_2_2"></div>' +
                     '<div class="navigator">' +
-                    '<a href="#">&nbsp;</a><a href="#">1</a><a href="#">2</a><a href="#">3</a><a href="#">4</a><a href="#">5</a><a href="#">6</a><a href="#">7</a><a href="#">8</a><a href="#">9</a>' +
-                    '</div>';
+                    '<a href="#">' + ZOOM + '</a><a href="#">&nbsp;</a><a href="#">1</a><a href="#">2</a><a href="#">3</a><a href="#">4</a><a href="#">5</a><a href="#">6</a><a href="#">7</a><a href="#">8</a><a href="#">9</a>' +
+                    '</div>' +
+                    '<div class="zoom"></div>';
 
 
-            var responsiveLayout = function(id) {
+            var responsiveLayout = function() {
                 var w = $('#' + id + ' .box span').outerWidth();
+
                 $('#' + id + ' .box span').css('height', w + 'px');
                 $('#' + id + ' .box span').css('font-size', Math.round(w / 2) + 'px');
+//
+                var dim = getInnerBoxesDimensions();
+                $('#' + id + ' .Sudoku span .zoombox').css('height', dim.h + 'px');
+                $('#' + id + ' .Sudoku span .zoombox').css('width', dim.w + 'px');
+            }
+
+            var getInnerBoxesDimensions = function(){
+                var w = $('#' + id + ' .box span').outerWidth();
+                var h = $('#' + id + ' .box span').outerHeight();
+//              because of the border: -2px
+                var _h = (Math.round(h/3))-2;
+                var _w = (Math.round(w/3))-2;
+                return {h: _h, w: _w};
             }
 
             $('#' + id).html('');
             $('#' + id).append('<div class="Sudoku">' + boxMarkup + '</div>');
             setTimeout(function() {
-                responsiveLayout(id);
+                responsiveLayout();
 
                 $('.Sudoku .editable').bind('click', function() {
                     coords = getCoords($(this).attr('class'));
@@ -254,28 +273,75 @@ var Sudoku = (function() {
             }, 5);
 
 
+            var showZoom = function(){
+
+                //reset width and height
+                $('#' + id + ' .active .zoombox').css('height','');
+                $('#' + id + ' .active .zoombox').css('width','');
+                var currentValue = $('#' + id + ' .active').html();
+                var zoomBoxes = '';
+                if(currentValue && typeof(currentValue) === 'string' && currentValue.split('div').length > 1){
+                    var zoomBoxes = currentValue;
+                }else{
+                    zoomBoxes = '<div class="zoombox zb_0_0"></div><div class="zoombox zb_0_1"></div><div class="zoombox zb_0_2"></div><div class="zoombox zb_1_0"></div><div class="zoombox zb_1_1"></div><div class="zoombox zb_1_2"></div><div class="zoombox zb_2_0"></div><div class="zoombox zb_2_1"></div><div class="zoombox zb_2_2"></div>';
+                }
+
+                $('#' + id + ' .zoom').show();
+                $('#' + id + ' .zoom').css('height', $('#' + id + ' .Sudoku .box').outerHeight()*3 + 'px');
+                $('#' + id + ' .zoom').css('width', $('#' + id + ' .Sudoku .box').outerWidth()*3 + 'px');
+                $('#' + id + ' .zoom').html(zoomBoxes);
+
+                //timeout for a better touch feeling so that the user sees the marked tile
+                $('.zoombox').bind('click', function(){
+                    $(this).addClass('selected');
+                    setTimeout(function(){
+                        hideZoom();
+                    }, 200);
+                });
+            };
+
+            var hideZoom = function(){
+                $('#' + id + ' .zoom').hide();
+                $('#' + id + ' .zoom')
+
+
+                var dim = getInnerBoxesDimensions();
+                $('#' + id + ' .Sudoku .zoom .zoombox').css('height', dim.h + 'px');
+                $('#' + id + ' .Sudoku .zoom .zoombox').css('width', dim.w + 'px');
+                
+
+                var value = $('#' + id + ' .zoom').html();
+
+                $('#' + id + ' .editable.active').html(value);
+                $('#' + id + ' .zoom').html();
+            };
+
             $(document).ready(function() {
-                var coords = {};
                 $('#' + id).css('overflow', 'hidden');
 
                 $(window).bind('resize', function() {
-                    responsiveLayout(id);
+                    responsiveLayout();
                 });
 //                TODO switch user agent
-                
+
 
                 $('.Sudoku .navigator a').bind('click', function() {
                     var value = $(this).html();
                     var activeOne = $('.Sudoku .active');
                     if (activeOne.length > 0) {
-                        activeOne.html(value);
-                        if (coords) {
-                            if (hintLevel === 1 && check(value, coords)) {
-                                activeOne.addClass('solved');
-                            } else {
-                                activeOne.removeClass('solved');
+                        if (value === ZOOM) {
+                            showZoom();
+                        } else {
+                            activeOne.html(value);
+                            if (coords) {
+                                if (hintLevel === 1 && check(value, coords)) {
+                                    activeOne.addClass('solved');
+                                } else {
+                                    activeOne.removeClass('solved');
+                                }
                             }
                         }
+
                     }
                 });
             });
