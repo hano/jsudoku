@@ -1,0 +1,69 @@
+
+.Sudoku .box span {
+    xpadding: 5px 10px 5px 10px;
+    color: #999;
+    display: block;
+    float: left;
+    border: 1px solid #555;
+    width: 31%;
+    xmax-height: 80px;
+    xmax-width: 80px;
+    text-align: center;
+    background: #adff2f;
+}
+
+.Sudoku .box span.editable {
+    color: #000;
+    background: #31BBF3;
+}
+
+.Sudoku .box span.correct{
+    background: #adff2f;
+}
+
+.Sudoku .box span.wrong{
+    background: #db7093;
+}
+
+.Sudoku .box span.solved{
+    color: green;
+}
+
+.Sudoku .box span.active{
+    background: #da70d6;
+}
+
+.Sudoku .box {
+    width: 30%;
+    float: left;
+    padding: 0 0 8px 0;
+    margin: 0;
+    height: 100%;
+}
+
+.Sudoku .box:nth-child(4),
+.Sudoku .box:nth-child(7){
+    clear:both;
+}
+
+.Sudoku .navigator{
+    float: left;
+    width: 100%;
+    padding: 50px 0 0 0;
+    margin: 0 auto;
+}
+
+.Sudoku .navigator a{
+    background: #EAC700;
+    color: #555;
+    width: 7%;
+    display: inline-block;
+    text-align: center;
+    margin: 0 1%;
+    border: 1px solid black;
+    height: 25px;
+    text-decoration: none;
+    font-size: 20px;
+    padding: 5px 0 0 0;
+    color: #333;
+}
