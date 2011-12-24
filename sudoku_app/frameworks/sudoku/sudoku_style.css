@@ -17,14 +17,39 @@
     color: #000;
     background: #31BBF3;
 }
-
+/*background: #adff2f;*/
 .Sudoku .box span.correct {
-    background: #adff2f;
+    background: #31BBF3;
+    animation: goright 5s;
+    -webkit-animation: goright 5s; /* Safari and Chrome */
 }
+
+    @keyframes goright
+    {
+    50% {background:#adff2f;}
+    }
+
+    @-webkit-keyframes goright /* Safari and Chrome */
+    {
+    50% {background:#adff2f;}
+    }
+
 
 .Sudoku .box span.wrong {
-    background: #db7093;
+    background: #31BBF3;
+    animation: gowrong 5s;
+    -webkit-animation: gowrong 5s; /* Safari and Chrome */
 }
+
+    @keyframes gowrong
+    {
+    50% {background:#db7093;}
+    }
+
+    @-webkit-keyframes gowrong /* Safari and Chrome */
+    {
+    50% {background:#db7093;}
+    }
 
 .Sudoku .box span.solved {
     color: green;
@@ -97,21 +122,22 @@
     height: 30%;
 }
 
-.Sudoku span .zoombox.selected{
+.Sudoku span .zoombox.selected {
     background: #F1C903;
 }
 
-.Sudoku .zoombox.selected{
+.Sudoku .zoombox.selected {
     background: red;
 }
 
 .Sudoku .zb_0_0,
 .Sudoku .zb_0_1,
-.Sudoku .zb_0_2{
+.Sudoku .zb_0_2 {
     border-top: none;
 }
+
 .Sudoku .zb_0_0,
 .Sudoku .zb_1_0,
-.Sudoku .zb_2_0{
+.Sudoku .zb_2_0 {
     border-left: none;
 }

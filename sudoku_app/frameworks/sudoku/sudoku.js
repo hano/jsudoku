@@ -292,10 +292,11 @@ var Sudoku = (function() {
                 $('#' + id + ' .zoom').html(zoomBoxes);
 
                 //timeout for a better touch feeling so that the user sees the marked tile
-                $('.zoombox').bind('click', function(){
+                $('#' + id + ' .zoom .zoombox').bind('click', function(){
                     $(this).addClass('selected');
+                    hideZoom();
                     setTimeout(function(){
-                        hideZoom();
+                        //hideZoom();
                     }, 200);
                 });
             };
